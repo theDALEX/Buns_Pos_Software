@@ -6,25 +6,27 @@ Welcome Buns POS is an open-source Point of Sale (POS) software project that sta
 
 We believe small shops shouldn’t need expensive hardware or complex systems to manage sales. With Buns POS, businesses can start using just their mobile phone and later scale to tablets or PCs as they grow.
 
+Buns POS also includes a dedicated kiosk mode, allowing shops to turn any device into a self‑service ordering station — perfect for cafés, bakeries, takeaways, and other fast‑moving environments.
+
 Built with **React Native (Expo)**, the app works across multiple platforms and devices.
 
 ---
 
 ## 🚀 Features
 
-- 📱 Works on mobile phones, tablets, and PCs  
-- 💰 Designed for small shops and local businesses  
-- 🌍 Open-source and community-driven  
-- 🔄 Easy to scale from phone to larger devices  
-- ⚡ Lightweight and simple to set up  
+- 📱 Works on mobile phones, tablets, and PCs
+- 💰 Designed for small shops and local businesses
+- 🌍 Open-source and community-driven
+- 🔄 Easy to scale from phone to larger devices
+- ⚡ Lightweight and simple to set up
 
 ---
 
 ## 🛠️ Tech Stack
 
-- React Native  
-- Expo  
-- JavaScript / TypeScript  
+- React Native
+- Expo
+- JavaScript / TypeScript
 
 ---
 
@@ -37,7 +39,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 ```bash
 npm install
 ```
+
 ### 2️⃣ Start the development server
+
 ```bash
 npx expo start
 ```
