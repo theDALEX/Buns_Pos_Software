@@ -34,10 +34,11 @@ export default function Index() {
 
     return () => {
       unsubAuth();
-      unsubDoc();
+      unsubDoc(); 
     };
   }, []);
-
+ 
+  
   return (
     <View>
       <Text>POS Software</Text>
