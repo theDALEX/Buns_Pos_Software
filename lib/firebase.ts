@@ -2,13 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-const firebaseApp = initializeApp({
-  apiKey: "AIzaSyC9m8n2sXo5l3a1b2c3d4e5f6g7h8i9j0",
-  authDomain: "kiosk-app.firebaseapp.com",
-  projectId: "kiosk-app",
-  storageBucket: "kiosk-app.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456",
-});
+const firebaseConfig = {
+  apiKey: "AIzaSyCUW9nLH478SaJYK5tiQ9lfs1SowMGPVIs",
+  authDomain: "bunspos.firebaseapp.com",
+  projectId: "bunspos",
+  storageBucket: "bunspos.firebasestorage.app",
+  messagingSenderId: "593049973722",
+  appId: "1:593049973722:web:25887470ce1e05d572c6e3",
+  measurementId: "G-JRQ1D4J147",
+};
+
+export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
