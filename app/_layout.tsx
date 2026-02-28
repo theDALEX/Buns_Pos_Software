@@ -1,5 +1,12 @@
 import { Stack } from "expo-router";
+import { CartProvider } from "./CartContext";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <CartProvider>
+      <Stack
+        screenOptions={{ headerTitleAlign: "center" }}
+      />
+    </CartProvider>
+  );
 }
