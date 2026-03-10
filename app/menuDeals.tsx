@@ -1,12 +1,13 @@
 import { useRouter } from "expo-router";
 import { useContext } from "react";
 import {
-    Dimensions,
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
 } from "react-native";
 import { CartContext, MenuItem } from "./CartContext";
 
@@ -71,88 +72,88 @@ export default function MealDeals() {
       name: deal.name,
       price: deal.dealPrice,
     };
-
     addToCart(dealItem);
   };
 
   return (
-    <View style={styles.container}>
-      {/* CART COLUMN */}
-      <View style={styles.cartColumn}>
-        <Text style={styles.cartTitle}>Cart</Text>
-        <Text>Items: {cart.reduce((s, i) => s + i.quantity, 0)}</Text>
-        <Text>Total: £{total.toFixed(2)}</Text>
+    <View style={styles.pageContainer}>
+      
+      {/* CUSTOM HEADER */}
+      <View style={styles.header}>
+        <Image
+          source={require("../assets/images/logo.png")}
+          style={styles.logo}
+        />
 
-        {cart.length > 0 && (
-          <>
-            <FlatList
-              data={cart}
-              keyExtractor={(i) => i.id}
-              style={styles.cartList}
-              renderItem={({ item }) => (
-                <View style={styles.cartItemRow}>
-                  <Text>
-                    {item.name} x{item.quantity}
-                  </Text>
-                  <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                    <Text style={styles.removeText}>×</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-
-            <TouchableOpacity
-              style={styles.checkoutButton}
-              onPress={() => router.push("/checkOut")}
-            >
-              <Text style={styles.checkoutText}>Checkout</Text>
-            </TouchableOpacity>
-          </>
-        )}
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.push("/menu")}
+        >
+          <Text style={styles.navText}>Menu</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* MEAL DEALS GRID */}
-      <View style={styles.menuColumn}>
-        <FlatList
-          data={SAMPLE_MEALS}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          renderItem={({ item }) => {
-            const savings = item.originalPrice - item.dealPrice;
+      <View style={styles.container}>
+        {/* CART */}
+        <View style={styles.cartColumn}>
+          <Text style={styles.cartTitle}>Cart</Text>
+          <Text>Items: {cart.reduce((s, i) => s + i.quantity, 0)}</Text>
+          <Text>Total: £{total.toFixed(2)}</Text>
 
-            return (
-              <View style={styles.card}>
-                <Text style={styles.icon}>{item.icon}</Text>
+          {cart.length > 0 && (
+            <>
+              <FlatList
+                data={cart}
+                keyExtractor={(i) => i.id}
+                style={styles.cartList}
+                renderItem={({ item }) => (
+                  <View style={styles.cartItemRow}>
+                    <Text>{item.name} x{item.quantity}</Text>
+                    <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                      <Text style={styles.removeText}>×</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
 
-                <Text style={styles.itemName}>{item.name}</Text>
+              <TouchableOpacity
+                style={styles.checkoutButton}
+                onPress={() => router.push("/checkOut")}
+              >
+                <Text style={styles.checkoutText}>Checkout</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
 
-                <Text style={styles.itemsText}>
-                  {item.items.join(" • ")}
-                </Text>
-
-                <Text style={styles.originalPrice}>
-                  £{item.originalPrice.toFixed(2)}
-                </Text>
-
-                <Text style={styles.dealPrice}>
-                  £{item.dealPrice.toFixed(2)}
-                </Text>
-
-                <Text style={styles.savings}>
-                  Save £{savings.toFixed(2)}
-                </Text>
-
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={() => handleAddDeal(item)}
-                >
-                  <Text style={styles.addText}>Add Deal</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
+        {/* MEAL DEALS GRID */}
+        <View style={styles.menuColumn}>
+          <FlatList
+            data={SAMPLE_MEALS}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            renderItem={({ item }) => {
+              const savings = item.originalPrice - item.dealPrice;
+              return (
+                <View style={styles.card}>
+                  <Text style={styles.icon}>{item.icon}</Text>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemsText}>{item.items.join(" • ")}</Text>
+                  <Text style={styles.originalPrice}>£{item.originalPrice.toFixed(2)}</Text>
+                  <Text style={styles.dealPrice}>£{item.dealPrice.toFixed(2)}</Text>
+                  <Text style={styles.savings}>Save £{savings.toFixed(2)}</Text>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => handleAddDeal(item)}
+                  >
+                    <Text style={styles.addText}>Add Deal</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -162,6 +163,42 @@ const { width } = Dimensions.get("window");
 const cartWidth = width * 0.35;
 
 const styles = StyleSheet.create({
+  pageContainer: {
+    flex: 1,
+    paddingTop: 0, // remove default stack header padding
+  },
+
+  header: {
+    height: 80,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    justifyContent: "space-between",
+  },
+
+  logo: {
+    width: 60,
+    height: 60,
+    resizeMode: "contain",
+  },
+
+  navButton: {
+    backgroundColor: "#ff9800",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  navText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
   container: {
     flex: 1,
     flexDirection: "row",
