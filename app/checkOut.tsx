@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import {
   Alert,
@@ -8,11 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CartContext } from "./CartContext";
-import { useRouter } from "expo-router";
+import { InventoryContext } from "./InventoryContext";
 
 export default function CheckoutScreen() {
-  const { cart, clearCart, removeFromCart } = useContext(CartContext);
+  const { cart, clearCart, removeFromCart } = useContext(InventoryContext);
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -37,7 +37,7 @@ export default function CheckoutScreen() {
 
     Alert.alert(
       "Order Confirmed 🎉",
-      `Thanks ${name}! Your total is $${total.toFixed(2)}`
+      `Thanks ${name}! Your total is £${total.toFixed(2)}`
     );
 
     clearCart();
@@ -62,7 +62,7 @@ export default function CheckoutScreen() {
                   {item.name} x{item.quantity}
                 </Text>
                 <Text>
-                  ${(item.price * item.quantity).toFixed(2)}
+                  £{(item.price * item.quantity).toFixed(2)}
                 </Text>
               </View>
 
@@ -77,7 +77,7 @@ export default function CheckoutScreen() {
         )}
 
         <Text style={styles.total}>
-          Total: ${total.toFixed(2)}
+          Total: £{total.toFixed(2)}
         </Text>
       </View>
 

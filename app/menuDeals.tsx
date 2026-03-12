@@ -3,13 +3,13 @@ import { useContext } from "react";
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from "react-native";
-import { CartContext, MenuItem } from "./CartContext";
+import { InventoryContext } from "./InventoryContext";
 
 type MealDeal = {
   id: string;
@@ -61,16 +61,18 @@ const SAMPLE_MEALS: MealDeal[] = [
 ];
 
 export default function MealDeals() {
-  const { addToCart, cart, removeFromCart } = useContext(CartContext);
+  const { addToCart, cart, removeFromCart } = useContext(InventoryContext);
   const router = useRouter();
 
   const total = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
   const handleAddDeal = (deal: MealDeal) => {
-    const dealItem: MenuItem = {
+    const dealItem = {
       id: deal.id,
       name: deal.name,
       price: deal.dealPrice,
+      stock: 999, // Deals always available
+      icon: deal.icon,
     };
     addToCart(dealItem);
   };

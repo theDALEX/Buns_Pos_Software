@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
-import { CartProvider } from "./CartContext";
+import { InventoryProvider } from "./InventoryContext";
 
 export default function RootLayout() {
   return (
-    <CartProvider>
+    <InventoryProvider>
       <Stack
         screenOptions={{
           headerTitleAlign: "center",
@@ -44,10 +44,25 @@ export default function RootLayout() {
 
         {/* Checkout Page */}
         <Stack.Screen
-          name="checkout"
+          name="checkOut"
           options={{ title: "Checkout" }}
         />
+
+        {/* Employee Login Page */}
+        <Stack.Screen
+          name="employeeLogin"
+          options={{ title: "Employee Access" }}
+        />
+
+        {/* Employee Dashboard Page */}
+        <Stack.Screen
+          name="employeeDashboard"
+          options={{ 
+            title: "Inventory Management",
+            headerShown: false,
+          }}
+        />
       </Stack>
-    </CartProvider>
+    </InventoryProvider>
   );
 }
