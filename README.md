@@ -41,3 +41,4 @@ npm install
 ```bash
 npx expo start
 ```
+npm install

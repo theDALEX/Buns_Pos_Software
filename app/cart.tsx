@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
-import { CartContext } from "./CartContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function CartScreen() {
-  const { cart, removeFromCart, clearCart } = useContext(CartContext);
+  const { cart, removeFromCart, clearCart } = useContext(InventoryContext);
   const total = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
   return (
@@ -19,13 +19,13 @@ export default function CartScreen() {
             renderItem={({ item }) => (
               <View style={styles.itemRow}>
                 <Text>
-                  {item.name} x{item.quantity} = ${(item.price * item.quantity).toFixed(2)}
+                  {item.name} x{item.quantity} = £{(item.price * item.quantity).toFixed(2)}
                 </Text>
                 <Button title="Remove" onPress={() => removeFromCart(item.id)} />
               </View>
             )}
           />
-          <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
+          <Text style={styles.total}>Total: £{total.toFixed(2)}</Text>
           <Button title="Clear Cart" onPress={clearCart} />
         </>
       )}
