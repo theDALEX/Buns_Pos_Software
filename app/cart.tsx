@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function CartScreen() {
   const { cart, removeFromCart, clearCart } = useContext(InventoryContext);

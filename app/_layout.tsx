@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { InventoryProvider } from "./InventoryContext";
+import { InventoryProvider } from "../lib/InventoryContext";
 
 export default function RootLayout() {
   return (

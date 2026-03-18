@@ -43,13 +43,13 @@ export default function Index() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.dealsButton}
-          onPress={() => router.push("/menuDeals")}
+          onPress={() => router.push("/menuDeals" as any)}
         >
           <Text style={styles.dealsButtonText}>View Deals</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.staffButton}
-          onPress={() => router.push("/employeeLogin")}
+          onPress={() => router.push("/employeeLogin" as any)}
         >
           <Text style={styles.staffButtonText}>Staff Login</Text>
         </TouchableOpacity>

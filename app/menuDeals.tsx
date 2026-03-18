@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 type MealDeal = {
   id: string;
@@ -120,7 +120,7 @@ export default function MealDeals() {
 
               <TouchableOpacity
                 style={styles.checkoutButton}
-                onPress={() => router.push("/checkOut")}
+                onPress={() => router.push("/checkOut" as any)}
               >
                 <Text style={styles.checkoutText}>Checkout</Text>
               </TouchableOpacity>

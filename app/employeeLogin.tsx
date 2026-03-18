@@ -1,15 +1,15 @@
 import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import {
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function EmployeeLogin() {
   const [password, setPassword] = useState("");
@@ -24,7 +24,7 @@ export default function EmployeeLogin() {
 
     if (loginEmployee(password)) {
       Alert.alert("Success", "Logged in as Employee");
-      router.push("/employeeDashboard");
+      router.push("/employeeDashboard" as any);
       setPassword("");
     } else {
       Alert.alert("Error", "Invalid password");

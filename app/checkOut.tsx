@@ -1,15 +1,15 @@
 import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function CheckoutScreen() {
   const { cart, clearCart, removeFromCart } = useContext(InventoryContext);

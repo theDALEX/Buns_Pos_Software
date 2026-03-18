@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function MenuScreen() {
   const { addToCart, cart, removeFromCart, items } = useContext(InventoryContext);
@@ -28,14 +28,14 @@ export default function MenuScreen() {
 
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => router.push("/menuDeals")}
+          onPress={() => router.push("/menuDeals" as any)}
         >
           <Text style={styles.navText}>Deals</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.employeeButton}
-          onPress={() => router.push("/employeeLogin")}
+          onPress={() => router.push("/employeeLogin" as any)}
         >
           <Text style={styles.employeeButtonText}>Staff</Text>
         </TouchableOpacity>
@@ -68,7 +68,7 @@ export default function MenuScreen() {
                 onPress={() => {
                   // placeholder for checkout action
                   console.log('checkout', cart, total);
-                  router.push('/checkOut');
+                  router.push('/checkOut' as any);
                 }}
               >
                 <Text style={styles.checkoutText}>Checkout</Text>

@@ -1,17 +1,17 @@
 import { useRouter } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
-    Alert,
-    FlatList,
-    Image,
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { InventoryContext } from "./InventoryContext";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function EmployeeDashboard() {
   const { items, updatePrice, updateStock, logoutEmployee, isEmployeeLoggedIn } =
@@ -23,10 +23,13 @@ export default function EmployeeDashboard() {
   const [modalVisible, setModalVisible] = useState(false);
 
   // Redirect if not logged in
-  if (!isEmployeeLoggedIn) {
-    router.push("/employeeLogin");
-    return null;
-  }
+  useEffect(() => {
+    if (!isEmployeeLoggedIn) {
+      router.push("/employeeLogin" as any);
+    }
+  }, [isEmployeeLoggedIn]);
+
+  if (!isEmployeeLoggedIn) return null;
 
   const handleEditItem = (id: string, currentPrice: number, currentStock: number) => {
     setEditingId(id);
@@ -54,7 +57,8 @@ export default function EmployeeDashboard() {
   };
 
   const handleLogout = () => {
-    router.push("/");
+    logoutEmployee();
+    router.push("/" as any);
   };
 
   return (
