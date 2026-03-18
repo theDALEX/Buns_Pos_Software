@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CartContext, MenuItem } from "./CartContext";
+import { CartContext, MenuItem } from "../lib/CartContext";
 
 type MealDeal = {
   id: string;
