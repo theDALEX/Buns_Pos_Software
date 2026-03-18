@@ -1,79 +1,118 @@
 import { useRouter } from "expo-router";
 import { useContext } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CartContext, MenuItem } from "./CartContext";
-
-const SAMPLE_MENU: MenuItem[] = [
-  { id: "1", name: "Cheeseburger", price: 5.99 },
-  { id: "2", name: "Fries", price: 2.99 },
-  { id: "3", name: "Soda", price: 1.99 },
-  { id: "4", name: "Pizza", price: 8.5 },
-  { id: "5", name: "Ice Cream", price: 3.25 },
-  { id: "6", name: "Salad", price: 4.75 },
-];
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import CustomerAI from "../components/CustomerAI";
+import { InventoryContext } from "../lib/InventoryContext";
 
 export default function MenuScreen() {
-  const { addToCart, cart, removeFromCart } = useContext(CartContext);
+  const { addToCart, cart, removeFromCart, items } = useContext(InventoryContext);
   const router = useRouter();
   const total = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cartColumn}>
-        <Text style={styles.cartTitle}>Cart</Text>
-        <Text>Items: {cart.reduce((s, i) => s + i.quantity, 0)}</Text>
-        <Text>Total: ${total.toFixed(2)}</Text>
-        {cart.length > 0 && (
-          <>
-            <FlatList
-              data={cart}
-              keyExtractor={(i) => i.id}
-              style={styles.cartList}
-              renderItem={({ item }) => (
-                <View style={styles.cartItemRow}>
-                  <Text>
-                    {item.name} x{item.quantity}
-                  </Text>
-                  <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                    <Text style={styles.removeText}>×</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-            <TouchableOpacity
-              style={styles.checkoutButton}
-              onPress={() => {
-                // placeholder for checkout action
-                console.log('checkout', cart, total);
-                router.push('/checkout');
-              }}
-            >
-              <Text style={styles.checkoutText}>Checkout</Text>
-            </TouchableOpacity>
-          </>
-        )}
+    <View style={styles.pageContainer}>
+      {/* CUSTOM HEADER */}
+      <View style={styles.header}>
+        <Image
+          source={require("../assets/images/logo.png")}
+          style={styles.logo}
+        />
+
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => router.push("/menuDeals" as any)}
+        >
+          <Text style={styles.navText}>Deals</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.employeeButton}
+          onPress={() => router.push("/employeeLogin" as any)}
+        >
+          <Text style={styles.employeeButtonText}>Staff</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.menuColumn}>
-        <FlatList
-          data={SAMPLE_MENU}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.icon}>🍔</Text>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+      <View style={styles.container}>
+        <View style={styles.cartColumn}>
+          <Text style={styles.cartTitle}>Cart</Text>
+          <Text>Items: {cart.reduce((s, i) => s + i.quantity, 0)}</Text>
+          <Text>Total: £{total.toFixed(2)}</Text>
+          {cart.length > 0 && (
+            <>
+              <FlatList
+                data={cart}
+                keyExtractor={(i) => i.id}
+                style={styles.cartList}
+                renderItem={({ item }) => (
+                  <View style={styles.cartItemRow}>
+                    <Text>
+                      {item.name} x{item.quantity}
+                    </Text>
+                    <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                      <Text style={styles.removeText}>×</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
               <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => addToCart(item)}
+                style={styles.checkoutButton}
+                onPress={() => {
+                  // placeholder for checkout action
+                  console.log('checkout', cart, total);
+                  router.push('/checkOut' as any);
+                }}
               >
-                <Text style={styles.addText}>Add to Cart</Text>
+                <Text style={styles.checkoutText}>Checkout</Text>
               </TouchableOpacity>
-            </View>
+            </>
           )}
-        />
+          <CustomerAI />
+        </View>
+
+        <View style={styles.menuColumn}>
+          <FlatList
+            data={items}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.icon}>{item.icon}</Text>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemPrice}>£{item.price.toFixed(2)}</Text>
+                <Text style={item.stock > 0 ? styles.stockAvailable : styles.stockOutOfStock}>
+                  {item.stock > 0 ? `Stock: ${item.stock}` : "Out of Stock"}
+                </Text>
+                <TouchableOpacity
+                  style={[
+                    styles.addButton,
+                    { opacity: item.stock > 0 ? 1 : 0.5 }
+                  ]}
+                  onPress={() => {
+                    if (item.stock > 0) {
+                      addToCart(item);
+                    } else {
+                      Alert.alert("Out of Stock", `${item.name} is currently unavailable`);
+                    }
+                  }}
+                  disabled={item.stock <= 0}
+                >
+                  <Text style={styles.addText}>Add to Cart</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
       </View>
     </View>
   );
@@ -84,6 +123,57 @@ const cartWidth = width * 0.35;
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: "row", padding: 8 },
+  pageContainer: {
+    flex: 1,
+    paddingTop: 0,
+  },
+
+  header: {
+    height: 80,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    justifyContent: "space-between",
+  },
+
+  logo: {
+    width: 60,
+    height: 60,
+    resizeMode: "contain",
+  },
+
+  navButton: {
+    backgroundColor: "#ff9800",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  navText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  employeeButton: {
+    backgroundColor: "#6c757d",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  employeeButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 12,
+  },
+
   cartColumn: {
     width: cartWidth,
     backgroundColor: "#fff",
@@ -126,12 +216,24 @@ const styles = StyleSheet.create({
   },
   icon: { fontSize: 32, marginBottom: 8 },
   itemName: { fontWeight: "bold", marginBottom: 4, textAlign: "center" },
-  itemPrice: { marginBottom: 8 },
+  itemPrice: { marginBottom: 8, fontWeight: "bold", fontSize: 14 },
+  stockAvailable: {
+    fontSize: 12,
+    color: "#28a745",
+    marginBottom: 8,
+    fontWeight: "500",
+  },
+  stockOutOfStock: {
+    fontSize: 12,
+    color: "#dc3545",
+    marginBottom: 8,
+    fontWeight: "500",
+  },
   addButton: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#ff9800",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 4,
   },
-  addText: { color: "white" },
+  addText: { color: "white", fontWeight: "bold" },
 });
