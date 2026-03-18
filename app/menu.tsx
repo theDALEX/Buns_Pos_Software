@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import CustomerAI from "../components/CustomerAI";
 import { InventoryContext } from "../lib/InventoryContext";
 
 export default function MenuScreen() {
@@ -75,6 +76,7 @@ export default function MenuScreen() {
               </TouchableOpacity>
             </>
           )}
+          <CustomerAI />
         </View>
 
         <View style={styles.menuColumn}>

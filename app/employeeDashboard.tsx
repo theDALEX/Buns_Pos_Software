@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import EmployeeAI from "../components/EmployeeAI";
 import { InventoryContext } from "../lib/InventoryContext";
 
 export default function EmployeeDashboard() {
@@ -80,8 +81,11 @@ export default function EmployeeDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* Inventory List */}
-      <FlatList
+      {/* Main layout: inventory list + AI panel */}
+      <View style={styles.mainRow}>
+        {/* Inventory List */}
+        <FlatList
+          style={styles.list}
         data={items}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
@@ -113,6 +117,12 @@ export default function EmployeeDashboard() {
           </View>
         )}
       />
+
+        {/* AI Panel */}
+        <View style={styles.aiPanel}>
+          <EmployeeAI />
+        </View>
+      </View>
 
       {/* Edit Modal */}
       <Modal
@@ -175,6 +185,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
 
+  mainRow: {
+    flex: 1,
+    flexDirection: "row",
+  },
+
+  aiPanel: {
+    width: 280,
+    borderLeftWidth: 1,
+    borderLeftColor: "#eee",
+    backgroundColor: "#f5f5f5",
+  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -215,6 +237,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 12,
+  },
+
+  list: {
+    flex: 1,
   },
 
   listContent: {
