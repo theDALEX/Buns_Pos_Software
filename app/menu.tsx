@@ -14,7 +14,7 @@ import CustomerAI from "../components/CustomerAI";
 import { InventoryContext } from "../lib/InventoryContext";
 
 export default function MenuScreen() {
-  const { addToCart, cart, removeFromCart, items } = useContext(InventoryContext);
+  const { addToCart, cart, removeFromCart, items, loading, error } = useContext(InventoryContext);
   const router = useRouter();
   const total = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
@@ -80,38 +80,54 @@ export default function MenuScreen() {
         </View>
 
         <View style={styles.menuColumn}>
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            columnWrapperStyle={styles.row}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.icon}>{item.icon}</Text>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>£{item.price.toFixed(2)}</Text>
-                <Text style={item.stock > 0 ? styles.stockAvailable : styles.stockOutOfStock}>
-                  {item.stock > 0 ? `Stock: ${item.stock}` : "Out of Stock"}
-                </Text>
-                <TouchableOpacity
-                  style={[
-                    styles.addButton,
-                    { opacity: item.stock > 0 ? 1 : 0.5 }
-                  ]}
-                  onPress={() => {
-                    if (item.stock > 0) {
-                      addToCart(item);
-                    } else {
-                      Alert.alert("Out of Stock", `${item.name} is currently unavailable`);
-                    }
-                  }}
-                  disabled={item.stock <= 0}
-                >
-                  <Text style={styles.addText}>Add to Cart</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
+          {error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={() => window.location.reload()}
+              >
+                <Text style={styles.retryText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          ) : loading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Loading menu...</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={items}
+              keyExtractor={(item) => item.id}
+              numColumns={2}
+              columnWrapperStyle={styles.row}
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <Text style={styles.icon}>{item.icon}</Text>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemPrice}>£{item.price.toFixed(2)}</Text>
+                  <Text style={item.stock > 0 ? styles.stockAvailable : styles.stockOutOfStock}>
+                    {item.stock > 0 ? `Stock: ${item.stock}` : "Out of Stock"}
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.addButton,
+                      { opacity: item.stock > 0 ? 1 : 0.5 }
+                    ]}
+                    onPress={() => {
+                      if (item.stock > 0) {
+                        addToCart(item);
+                      } else {
+                        Alert.alert("Out of Stock", `${item.name} is currently unavailable`);
+                      }
+                    }}
+                    disabled={item.stock <= 0}
+                  >
+                    <Text style={styles.addText}>Add to Cart</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          )}
         </View>
       </View>
     </View>
@@ -236,4 +252,35 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   addText: { color: "white", fontWeight: "bold" },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#d32f2f",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: "#ff9800",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+  },
+  retryText: {
+    color: "white",
+    fontWeight: "bold",
+  },
 });

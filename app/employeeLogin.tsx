@@ -1,34 +1,44 @@
 import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { InventoryContext } from "../lib/InventoryContext";
 
 export default function EmployeeLogin() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { loginEmployee } = useContext(InventoryContext);
 
-  const handleLogin = () => {
-    if (!password) {
-      Alert.alert("Error", "Please enter a password");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
       return;
     }
 
-    if (loginEmployee(password)) {
-      Alert.alert("Success", "Logged in as Employee");
-      router.push("/employeeDashboard" as any);
-      setPassword("");
-    } else {
-      Alert.alert("Error", "Invalid password");
-      setPassword("");
+    setLoading(true);
+    try {
+      const success = await loginEmployee(email, password);
+      if (success) {
+        Alert.alert("Success", "Logged in as Employee");
+        router.push("/employeeDashboard" as any);
+        setEmail("");
+        setPassword("");
+      } else {
+        Alert.alert("Error", "Invalid email or password");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,6 +56,19 @@ export default function EmployeeLogin() {
         <Text style={styles.subtitle}>Access inventory management</Text>
 
         <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter employee email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
@@ -58,11 +81,14 @@ export default function EmployeeLogin() {
         </View>
 
         <TouchableOpacity
-          style={styles.loginButton}
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
           onPress={handleLogin}
           activeOpacity={0.8}
+          disabled={loading}
         >
-          <Text style={styles.loginButtonText}>Login</Text>
+          <Text style={styles.loginButtonText}>
+            {loading ? "Logging in..." : "Login"}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -73,7 +99,10 @@ export default function EmployeeLogin() {
         </TouchableOpacity>
 
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Demo Password: admin123</Text>
+          <Text style={styles.infoText}>Demo Credentials:</Text>
+          <Text style={styles.infoText}>Manager: manager@buns.com / manager123</Text>
+          <Text style={styles.infoText}>Chef: chef@buns.com / chef123</Text>
+          <Text style={styles.infoText}>Server: server1@buns.com / server123</Text>
         </View>
       </View>
     </View>
@@ -151,6 +180,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
     marginBottom: 12,
+  },
+
+  loginButtonDisabled: {
+    backgroundColor: "#ccc",
   },
 
   loginButtonText: {

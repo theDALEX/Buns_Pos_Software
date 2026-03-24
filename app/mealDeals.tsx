@@ -1,14 +1,15 @@
 import { useRouter } from "expo-router";
 import { useContext } from "react";
 import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    FlatList,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { CartContext, MenuItem } from "../lib/CartContext";
+import { MealDealsContext } from "../lib/MealDealsContext";
 
 type MealDeal = {
   id: string;
@@ -61,6 +62,7 @@ const SAMPLE_MEALS: MealDeal[] = [
 
 export default function MealDeals() {
   const { addToCart, cart, removeFromCart } = useContext(CartContext);
+  const { mealDeals, loading, error } = useContext(MealDealsContext);
   const router = useRouter();
 
   const total = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
@@ -113,46 +115,62 @@ export default function MealDeals() {
 
       {/* MEAL DEALS GRID */}
       <View style={styles.menuColumn}>
-        <FlatList
-          data={SAMPLE_MEALS}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          renderItem={({ item }) => {
-            const savings = item.originalPrice - item.dealPrice;
+        {error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={() => window.location.reload()}
+            >
+              <Text style={styles.retryText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        ) : loading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading meal deals...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={mealDeals}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={styles.row}
+            renderItem={({ item }) => {
+              const savings = item.originalPrice - item.dealPrice;
 
-            return (
-              <View style={styles.card}>
-                <Text style={styles.icon}>{item.icon}</Text>
+              return (
+                <View style={styles.card}>
+                  <Text style={styles.icon}>{item.icon}</Text>
 
-                <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemName}>{item.name}</Text>
 
-                <Text style={styles.itemsText}>
-                  {item.items.join(" • ")}
-                </Text>
+                  <Text style={styles.itemsText}>
+                    {item.items.join(" • ")}
+                  </Text>
 
-                <Text style={styles.originalPrice}>
-                  £{item.originalPrice.toFixed(2)}
-                </Text>
+                  <Text style={styles.originalPrice}>
+                    £{item.originalPrice.toFixed(2)}
+                  </Text>
 
-                <Text style={styles.dealPrice}>
-                  £{item.dealPrice.toFixed(2)}
-                </Text>
+                  <Text style={styles.dealPrice}>
+                    £{item.dealPrice.toFixed(2)}
+                  </Text>
 
-                <Text style={styles.savings}>
-                  Save £{savings.toFixed(2)}
-                </Text>
+                  <Text style={styles.savings}>
+                    Save £{savings.toFixed(2)}
+                  </Text>
 
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={() => handleAddDeal(item)}
-                >
-                  <Text style={styles.addText}>Add Deal</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => handleAddDeal(item)}
+                  >
+                    <Text style={styles.addText}>Add Deal</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     </View>
   );
@@ -279,6 +297,43 @@ const styles = StyleSheet.create({
   },
 
   addText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+  },
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  errorText: {
+    fontSize: 16,
+    color: "#d32f2f",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
+  retryButton: {
+    backgroundColor: "#ff9800",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+  },
+
+  retryText: {
     color: "white",
     fontWeight: "bold",
   },

@@ -1,21 +1,21 @@
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import {
-  Alert,
-  FlatList,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    FlatList,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import EmployeeAI from "../components/EmployeeAI";
 import { InventoryContext } from "../lib/InventoryContext";
 
 export default function EmployeeDashboard() {
-  const { items, updatePrice, updateStock, logoutEmployee, isEmployeeLoggedIn } =
+  const { items, updatePrice, updateStock, logoutEmployee, isEmployeeLoggedIn, loading, error } =
     useContext(InventoryContext);
   const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -57,9 +57,15 @@ export default function EmployeeDashboard() {
     setEditingId(null);
   };
 
-  const handleLogout = () => {
-    logoutEmployee();
-    router.push("/" as any);
+  const handleLogout = async () => {
+    try {
+      await logoutEmployee();
+      router.push("/" as any);
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Still navigate away even if logout fails
+      router.push("/" as any);
+    }
   };
 
   return (
@@ -84,39 +90,55 @@ export default function EmployeeDashboard() {
       {/* Main layout: inventory list + AI panel */}
       <View style={styles.mainRow}>
         {/* Inventory List */}
-        <FlatList
-          style={styles.list}
-        data={items}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <View style={styles.itemCard}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemIcon}>{item.icon}</Text>
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <View style={styles.priceStockRow}>
-                  <Text style={styles.itemDetails}>
-                    Price: <Text style={styles.value}>£{item.price.toFixed(2)}</Text>
-                  </Text>
-                  <Text style={styles.itemDetails}>
-                    Stock: <Text style={styles.value}>{item.stock}</Text>
-                  </Text>
-                </View>
-              </View>
-            </View>
-
+        {error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
             <TouchableOpacity
-              style={styles.editButton}
-              onPress={() =>
-                handleEditItem(item.id, item.price, item.stock)
-              }
+              style={styles.retryButton}
+              onPress={() => window.location.reload()}
             >
-              <Text style={styles.editButtonText}>Edit</Text>
+              <Text style={styles.retryText}>Retry</Text>
             </TouchableOpacity>
           </View>
+        ) : loading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Loading inventory...</Text>
+          </View>
+        ) : (
+          <FlatList
+            style={styles.list}
+            data={items}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            renderItem={({ item }) => (
+              <View style={styles.itemCard}>
+                <View style={styles.itemHeader}>
+                  <Text style={styles.itemIcon}>{item.icon}</Text>
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <View style={styles.priceStockRow}>
+                      <Text style={styles.itemDetails}>
+                        Price: <Text style={styles.value}>£{item.price.toFixed(2)}</Text>
+                      </Text>
+                      <Text style={styles.itemDetails}>
+                        Stock: <Text style={styles.value}>{item.stock}</Text>
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() =>
+                    handleEditItem(item.id, item.price, item.stock)
+                  }
+                >
+                  <Text style={styles.editButtonText}>Edit</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
         )}
-      />
 
         {/* AI Panel */}
         <View style={styles.aiPanel}>
@@ -389,5 +411,42 @@ const styles = StyleSheet.create({
     color: "#666",
     fontWeight: "bold",
     fontSize: 14,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+  },
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  errorText: {
+    fontSize: 16,
+    color: "#d32f2f",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
+  retryButton: {
+    backgroundColor: "#ff9800",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 6,
+  },
+
+  retryText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
