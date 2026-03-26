@@ -12,7 +12,11 @@ const LEVEL_COLOR: Record<string, string> = {
   "very busy": "#dc3545",
 };
 
-export default function EmployeeAI() {
+type EmployeeAIProps = {
+  showHeader?: boolean;
+};
+
+export default function EmployeeAI({ showHeader = true }: EmployeeAIProps) {
   const { items } = useContext(InventoryContext);
   const [tab, setTab] = useState<Tab>("restock");
 
@@ -22,12 +26,14 @@ export default function EmployeeAI() {
   const forecast = getBusyForecast();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, !showHeader && styles.centeredContainer]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>🤖 AI Insights</Text>
-        <Text style={styles.headerSub}>Powered by sales history</Text>
-      </View>
+      {showHeader && (
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>🤖 AI Insights</Text>
+          <Text style={styles.headerSub}>Powered by sales history</Text>
+        </View>
+      )}
 
       {/* Tabs */}
       <View style={styles.tabs}>
@@ -115,6 +121,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  centeredContainer: {
+    paddingTop: 40,
   },
   header: {
     backgroundColor: "#1a1a2e",

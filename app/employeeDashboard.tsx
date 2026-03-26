@@ -1,15 +1,18 @@
 import { useRouter } from "expo-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-    Alert,
-    FlatList,
-    Image,
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import EmployeeAI from "../components/EmployeeAI";
 import { InventoryContext } from "../lib/InventoryContext";
@@ -22,6 +25,8 @@ export default function EmployeeDashboard() {
   const [editPrice, setEditPrice] = useState("");
   const [editStock, setEditStock] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [showAI, setShowAI] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
 
   // Redirect if not logged in
   useEffect(() => {
@@ -68,6 +73,23 @@ export default function EmployeeDashboard() {
     }
   };
 
+  const handleShowAI = () => {
+    setShowAI(true);
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleHideAI = () => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setShowAI(false));
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -87,64 +109,98 @@ export default function EmployeeDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* Main layout: inventory list + AI panel */}
+      {/* Main layout: inventory list */}  
       <View style={styles.mainRow}>
-        {/* Inventory List */}
-        {error ? (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={() => window.location.reload()}
-            >
-              <Text style={styles.retryText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        ) : loading ? (
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading inventory...</Text>
-          </View>
-        ) : (
-          <FlatList
-            style={styles.list}
-            data={items}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => (
-              <View style={styles.itemCard}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemIcon}>{item.icon}</Text>
-                  <View style={styles.itemInfo}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <View style={styles.priceStockRow}>
-                      <Text style={styles.itemDetails}>
-                        Price: <Text style={styles.value}>£{item.price.toFixed(2)}</Text>
-                      </Text>
-                      <Text style={styles.itemDetails}>
-                        Stock: <Text style={styles.value}>{item.stock}</Text>
-                      </Text>
+        <ScrollView style={styles.scrollView}>
+          {/* Inventory List */}
+          {error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={() => window.location.reload()}
+              >
+                <Text style={styles.retryText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          ) : loading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Loading inventory...</Text>
+            </View>
+          ) : (
+            <FlatList
+              style={styles.list}
+              data={items}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.listContent}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <View style={styles.itemCard}>
+                  <View style={styles.itemHeader}>
+                    <Text style={styles.itemIcon}>{item.icon}</Text>
+                    <View style={styles.itemInfo}>
+                      <Text style={styles.itemName}>{item.name}</Text>
+                      <View style={styles.priceStockRow}>
+                        <Text style={styles.itemDetails}>
+                          Price: <Text style={styles.value}>£{item.price.toFixed(2)}</Text>
+                        </Text>
+                        <Text style={styles.itemDetails}>
+                          Stock: <Text style={styles.value}>{item.stock}</Text>
+                        </Text>
+                      </View>
                     </View>
                   </View>
+
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() =>
+                      handleEditItem(item.id, item.price, item.stock)
+                    }
+                  >
+                    <Text style={styles.editButtonText}>Edit</Text>
+                  </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity
-                  style={styles.editButton}
-                  onPress={() =>
-                    handleEditItem(item.id, item.price, item.stock)
-                  }
-                >
-                  <Text style={styles.editButtonText}>Edit</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-        )}
-
-        {/* AI Panel */}
-        <View style={styles.aiPanel}>
-          <EmployeeAI />
-        </View>
+              )}
+            />
+          )}
+        </ScrollView>
       </View>
+
+      {/* AI Insights Button */}
+      {!showAI && (
+        <TouchableOpacity style={styles.aiButton} onPress={handleShowAI}>
+          <Text style={styles.aiButtonText}>AI Insights</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Animated AI Panel */}
+      {showAI && (
+        <Animated.View
+          style={[
+            styles.aiOverlay,
+            {
+              transform: [
+                {
+                  translateY: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [Dimensions.get('window').height, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.aiHeader}>
+            <TouchableOpacity style={styles.backButton} onPress={handleHideAI}>
+              <Text style={styles.backButtonText}>← Back</Text>
+            </TouchableOpacity>
+            <Text style={styles.aiTitle}>AI Insights</Text>
+          </View>
+          <View style={styles.aiContent}>
+            <EmployeeAI showHeader={false} />
+          </View>
+        </Animated.View>
+      )}
 
       {/* Edit Modal */}
       <Modal
@@ -209,14 +265,78 @@ const styles = StyleSheet.create({
 
   mainRow: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
   },
 
-  aiPanel: {
-    width: 280,
-    borderLeftWidth: 1,
-    borderLeftColor: "#eee",
-    backgroundColor: "#f5f5f5",
+  scrollView: {
+    flex: 1,
+  },
+
+  aiButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#ff9800',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  aiButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  aiOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#f5f5f5',
+    zIndex: 10,
+  },
+
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+
+  backButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+
+  backButtonText: {
+    color: '#ff9800',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  aiTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+
+  aiContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 24,
   },
 
   header: {
@@ -266,15 +386,15 @@ const styles = StyleSheet.create({
   },
 
   listContent: {
-    padding: 16,
-    paddingBottom: 20,
+    padding: 12,
+    paddingBottom: 16,
   },
 
   itemCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    padding: 12,
+    marginBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -289,11 +409,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 8,
   },
 
   itemIcon: {
-    fontSize: 40,
+    fontSize: 32,
   },
 
   itemInfo: {
@@ -309,7 +429,7 @@ const styles = StyleSheet.create({
 
   priceStockRow: {
     flexDirection: "row",
-    gap: 16,
+    gap: 12,
   },
 
   itemDetails: {
@@ -324,15 +444,15 @@ const styles = StyleSheet.create({
 
   editButton: {
     backgroundColor: "#ff9800",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
   },
 
   editButtonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 11,
   },
 
   modalOverlay: {

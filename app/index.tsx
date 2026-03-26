@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import {
-  Dimensions,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,7 +12,7 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Welcome Section */}
       <View style={styles.welcomeSection}>
         <Image
@@ -48,36 +48,33 @@ export default function Index() {
           <Text style={styles.dealsButtonText}>View Deals</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.staffButton}
+          style={styles.employeeButton}
           onPress={() => router.push("/employeeLogin" as any)}
         >
-          <Text style={styles.staffButtonText}>Staff Login</Text>
+          <Text style={styles.employeeButtonText}>Employee Login</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
-
-const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    justifyContent: "space-between",
-    padding: 20,
   },
 
   welcomeSection: {
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 20,
+    paddingHorizontal: 20,
   },
 
   logo: {
     width: 80,
     height: 80,
     resizeMode: "contain",
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   welcomeTitle: {
@@ -91,15 +88,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#666",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   featuredCard: {
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 24,
+    marginHorizontal: 20,
     alignItems: "center",
-    marginVertical: 30,
+    marginVertical: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -133,7 +131,8 @@ const styles = StyleSheet.create({
 
   ctaSection: {
     gap: 12,
-    marginBottom: 40,
+    marginBottom: 20,
+    paddingHorizontal: 20,
   },
 
   orderButton: {
@@ -169,17 +168,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  staffButton: {
-    backgroundColor: "#6c757d",
+  employeeButton: {
+    backgroundColor: "#4a90e2",
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
-    marginTop: 12,
+    shadowColor: "#4a90e2",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
 
-  staffButtonText: {
+  employeeButtonText: {
     color: "white",
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

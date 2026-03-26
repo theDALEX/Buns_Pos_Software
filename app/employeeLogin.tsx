@@ -1,13 +1,14 @@
 import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import {
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { InventoryContext } from "../lib/InventoryContext";
 
@@ -43,7 +44,7 @@ export default function EmployeeLogin() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require("../assets/images/logo.png")}
@@ -105,7 +106,7 @@ export default function EmployeeLogin() {
           <Text style={styles.infoText}>Server: server1@buns.com / server123</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
 
   header: {
     alignItems: "center",
-    marginVertical: 60,
+    marginVertical: 20,
   },
 
   logo: {
@@ -148,11 +149,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 24,
+    marginBottom: 16,
   },
 
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
 
   label: {
@@ -178,8 +179,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 24,
-    marginBottom: 12,
+    marginTop: 16,
+    marginBottom: 8,
   },
 
   loginButtonDisabled: {
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   infoBox: {
-    marginTop: 24,
+    marginTop: 16,
     padding: 12,
     backgroundColor: "#f0f8ff",
     borderRadius: 8,
